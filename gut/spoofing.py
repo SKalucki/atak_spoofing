@@ -2,46 +2,33 @@ import sys
 from time import sleep
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPainter, QPixmap, QIcon, QDoubleValidator, QIntValidator, QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QGroupBox, QGridLayout, \
     QDialog, QLineEdit, QMessageBox
-from PyQt5.QtGui import QPainter, QPixmap, QIcon, QDoubleValidator, QIntValidator, QColor, QFont
-
-import numpy as np
-import wave
-import scipy as sp
-
-
-class OverlayWidget(QWidget):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.setAttribute(Qt.WA_TransparentForMouseEvents)
-        self.setStyleSheet("background-color: rgba(0, 0, 0, 150);")
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.background_image = QPixmap('F:\PythonProjects\pythonProject\stacja_empty.png')
+
+        self.background_image = QPixmap('stacja_empty.png')
         self.init_ui()
         self.welcome()
-        self.channel_value = 0
         mainLayout = QVBoxLayout()
-        # mainLayout.addWidget(self.welcomeBox)
-        # self.setLayout(mainLayout)
-        # biggerWindow = QWidget()
-        self.smallerWindow = QDialog(self)
-        self.enterWindow = QDialog(self)
 
+        self.smallerWindow = QDialog()
+        self.enterWindow = QDialog()
+        self.smallerWindow.setWindowTitle(' ')
+        self.enterWindow.setWindowTitle(' ')
         self.smallerWindow.setWindowFlags(self.smallerWindow.windowFlags() | Qt.Popup)
-        smallerWindowLayout = QVBoxLayout(self.smallerWindow)
-        smallerWindowLayout.addWidget(self.welcomeBox)
+        self.smallerWindowLayout = QVBoxLayout(self.smallerWindow)
+        self.smallerWindowLayout.addWidget(self.welcomeBox)
 
         mainLayout.addWidget(self.smallerWindow)
         sleep(0.05)
-        self.smallerWindow.exec_()
+        self.smallerWindow.show()
 
     def init_ui(self):
-        # self.setGeometry(100, 100, 953, 643)
         self.setMinimumSize(953, 643)
         self.setWindowTitle('Atak na stację pogodową')
         self.setFixedSize(self.size())
@@ -51,67 +38,66 @@ class MainWindow(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.drawPixmap(self.rect(), self.background_image)
-        overlay_color = QColor(0, 0, 0, 150)
-        # Set the opacity of the overlay color
-        painter.setOpacity(0.5)
-        # Set the brush with the overlay color
-        painter.setBrush(overlay_color)
-        # Set the composition mode to DestinationOver to blend the overlay with the background
-        painter.setCompositionMode(QPainter.CompositionMode_DestinationOver)
-        painter.drawRect(self.rect())
-
-    def channel1(self):
-        pass
-
-    def channel2(self):
-        pass
-
-    def channel3(self):
-        pass
 
     def handleButtonClick(self):
-        clickedButton = app.sender()
 
+        clickedButton = app.sender()
         self.enterWindow.setWindowFlags(self.enterWindow.windowFlags() | Qt.Popup)
         self.enterValues()
 
-        enterWindowLayout = QVBoxLayout(self.enterWindow)
-        enterWindowLayout.addWidget(self.enterV)
+        self.enterWindowLayout = QVBoxLayout(self.enterWindow)
+        self.enterWindowLayout.addWidget(self.enterV)
 
         if clickedButton == self.select_channel1:
-            self.channel_value = 1
             self.smallerWindow.close()
-            self.enterWindow.setStyleSheet("background-color: LightSkyBlue")
-            self.enterWindow.exec_()
+            self.channel_value = 1
+            self.enterWindow.setStyleSheet("background-color: #36D173")
+            self.enterWindow.show()
 
         elif clickedButton == self.select_channel2:
-            self.channel_value = 2
             self.smallerWindow.close()
-            self.enterWindow.setStyleSheet("background-color: PeachPuff")
-            self.enterWindow.exec_()
+            self.channel_value = 2
+            self.enterWindow.setStyleSheet("background-color: #ffab00")
+            self.enterWindow.show()
 
         elif clickedButton == self.select_channel3:
-            self.channel_value = 3
             self.smallerWindow.close()
-            self.enterWindow.setStyleSheet("background-color: SeaGreen")
-            self.enterWindow.exec_()
+            self.channel_value = 3
+            self.enterWindow.setStyleSheet("background-color: #44BCE9")
+            self.enterWindow.show()
+
 
     def welcome(self):
-        self.welcomeBox = QGroupBox("Group 1")
+        global close
+        close = 1
+
+        self.welcomeBox = QGroupBox()
         info = QLabel("Wybierz kanał, na który chcesz wykonać atak Spoofing.")
         info.setStyleSheet("height: 70px; width: 500px; font-weight: bold")
         info.setFont(QFont("Didot", 25))
         info.setStyleSheet("color: black")
 
         self.select_channel1 = QPushButton("Kanał 1")
-        self.select_channel1.setStyleSheet("height: 70px; width 300px; background-color: white; border-radius: 5px")
+        self.select_channel1.setStyleSheet("QPushButton {height: 70px; width: 220px; background-color: white; "
+                                           "border-radius: 8px; border: 1px solid black}"
+                                           "QPushButton:hover {background-color: #36D173;}")
+
         self.select_channel1.setFont(QFont("Didot", 20))
+
         self.select_channel2 = QPushButton("Kanał 2")
-        self.select_channel2.setStyleSheet("height: 70px; width 300px; background-color: white; border-radius: 5px")
+        self.select_channel2.setStyleSheet("QPushButton {height: 70px; width: 260px; background-color: white; "
+                                           "border-radius: 8px; border: 1px solid black}"
+                                           "QPushButton:hover {background-color: #ffab00;}")
         self.select_channel2.setFont(QFont("Didot", 20))
+
         self.select_channel3 = QPushButton("Kanał 3")
-        self.select_channel3.setStyleSheet("height: 70px; width 300px; background-color: white; border-radius: 5px")
+        self.select_channel3.setStyleSheet("QPushButton {height: 70px; width: 260px; background-color: white; "
+                                           "border-radius: 8px; border: 1px solid black}"
+                                           "QPushButton:hover {background-color: #44BCE9;}")
         self.select_channel3.setFont(QFont("Didot", 20))
+        self.select_channel1.setCursor(Qt.PointingHandCursor)
+        self.select_channel2.setCursor(Qt.PointingHandCursor)
+        self.select_channel3.setCursor(Qt.PointingHandCursor)
 
         layout = QGridLayout()
         topLayout = QVBoxLayout()
@@ -129,11 +115,11 @@ class MainWindow(QWidget):
 
     def enterValues(self):
         self.enterV = QGroupBox()
-        self.enterV.setTitle("Wybór wartości.")
+        self.enterV.setTitle("Wybór wartości")
         valuesLayout = QGridLayout()
 
         temperatureLabel = QLabel("Temperatura")
-        temperatureLabel2 = QLabel("(-40" +  u"\N{DEGREE SIGN}" + " - 70" + u"\N{DEGREE SIGN})")
+        temperatureLabel2 = QLabel("(-40" + u"\N{DEGREE SIGN}" + " - 70" + u"\N{DEGREE SIGN})")
         temperatureLabel.setWordWrap(True)
         self.temperature = QLineEdit()
         humidityLabel = QLabel("Wilgotność")
@@ -151,9 +137,11 @@ class MainWindow(QWidget):
         self.humidity.setFixedWidth(200)
 
         temperatureLabel.setStyleSheet("height: 70px; width: 500px; font-weight: bold")
-        self.temperature.setStyleSheet("height: 70px; width: 300px; background-color: white; border-radius: 5px")
+        self.temperature.setStyleSheet("height: 70px; width: 300px; background-color: white;"
+                                       " border-radius: 8px; border: 1px solid black")
         humidityLabel.setStyleSheet("height: 70px; width: 500px; font-weight: bold")
-        self.humidity.setStyleSheet("height: 70px; width 300px; background-color: white; border-radius: 5px")
+        self.humidity.setStyleSheet("height: 70px; width: 300px; background-color: white;"
+                                    " border-radius: 8px; border: 1px solid black")
 
         temperatureLabel.setFont(QFont("Didot", 25))
         temperatureLabel2.setFont(QFont("Didot", 18))
@@ -166,7 +154,10 @@ class MainWindow(QWidget):
         self.humidity.textChanged.connect(self.validate_humidity)
 
         button = QPushButton("Wygeneruj sygnał")
-        button.setStyleSheet("height: 70px; width 300px; background-color: white; border-radius: 5px")
+        button.setStyleSheet("QPushButton {height: 70px; width: 260px; background-color: white; "
+                                           "border-radius: 8px; border: 1px solid black}"
+                                           "QPushButton:hover {background-color: #90c5e8;}")
+        button.setCursor(Qt.PointingHandCursor)
         button.setFont(QFont("Didot", 20))
         button.clicked.connect(self.create_signal)
 
@@ -180,12 +171,6 @@ class MainWindow(QWidget):
         valuesLayout.addWidget(self.humidity, 2, 1)
         valuesLayout.addWidget(button, 3, 0, 1, 0)
 
-        if self.channel_value == 1:
-            pass
-        if self.channel_value == 2:
-            pass
-        if self.channel_value == 3:
-            pass
         self.enterV.setLayout(valuesLayout)
 
     def validate_temperature(self):
@@ -207,40 +192,53 @@ class MainWindow(QWidget):
         maxVal = self.progressBar.maximum()
         self.progressBar.setValue(curVal + (maxVal - curVal) / 100)
 
-
     def create_signal(self):
-        temperature = float(self.temperature.text())
-        humidity = int(self.humidity.text())
-        if ((temperature < -40 or temperature > 70) and (humidity > 95 or humidity < 20)):
+        if self.temperature.text() == '' or self.humidity.text() == '':
             error_message = QMessageBox()
             error_message.setIcon(QMessageBox.Warning)
             error_message.setWindowTitle("Błąd")
-            error_message.setText("Wprowadzona temperatury i wilgotności jest nieprawidłowa!")
-            error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
-            error_message.exec_()
-        elif (temperature < -40 or temperature > 70):
-            error_message = QMessageBox()
-            error_message.setIcon(QMessageBox.Warning)
-            error_message.setWindowTitle("Błąd")
-            error_message.setText('Wprowadzona temperatury jest nieprawidłowa!')
-            error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
-            error_message.exec_()
-        elif (humidity > 95 or humidity < 20):
-            error_message = QMessageBox()
-            error_message.setIcon(QMessageBox.Warning)
-            error_message.setWindowTitle("Błąd")
-            error_message.setText("Wprowadzona wilgotności jest nieprawidłowa!")
+            error_message.setText("Nie wprowadzono wszystkich wartości!")
             error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
             error_message.exec_()
         else:
-            create_signal(generate_bin(int(temperature), int(humidity), int(self.channel_value)))
-            message = QMessageBox()
-            message.setIcon(QMessageBox.Information)
-            message.setWindowTitle("Generowanie sygnału.")
-            message.setText("Sygnał wygenerowany pomyślnie.")
-            message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
-            message.exec_()
-            print("dziala")
+            temperature = float(self.temperature.text())
+            humidity = int(self.humidity.text())
+            if ((temperature < -40 or temperature > 70) and (humidity > 95 or humidity < 20)):
+                error_message = QMessageBox()
+                error_message.setIcon(QMessageBox.Warning)
+                error_message.setWindowTitle("Błąd")
+                error_message.setText("Wprowadzona temperatury i wilgotności jest nieprawidłowa!")
+                error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
+                error_message.exec_()
+            elif (temperature < -40 or temperature > 70):
+                error_message = QMessageBox()
+                error_message.setIcon(QMessageBox.Warning)
+                error_message.setWindowTitle("Błąd")
+                error_message.setText('Wprowadzona temperatury jest nieprawidłowa!')
+                error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
+                error_message.exec_()
+            elif (humidity > 95 or humidity < 20):
+                error_message = QMessageBox()
+                error_message.setIcon(QMessageBox.Warning)
+                error_message.setWindowTitle("Błąd")
+                error_message.setText("Wprowadzona wilgotności jest nieprawidłowa!")
+                error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
+                error_message.exec_()
+            elif humidity is None or temperature is None:
+                error_message = QMessageBox()
+                error_message.setIcon(QMessageBox.Warning)
+                error_message.setWindowTitle("Błąd")
+                error_message.setText("Nie wprowadzono wszystkich wartości!")
+                error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
+                error_message.exec_()
+            else:
+                create_signal(generate_bin(int(temperature), int(humidity), int(self.channel_value)))
+                message = QMessageBox()
+                message.setIcon(QMessageBox.Information)
+                message.setWindowTitle("Generowanie sygnału.")
+                message.setText("Sygnał wygenerowany pomyślnie.")
+                message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
+                message.exec_()
 
 
 def crc4(message, nBytes, polynomial, init):
@@ -266,10 +264,12 @@ def generate_crc(msg):
     crc ^= msg[4] >> 4
     return crc
 
+
 def calc_temp(temp_c):
     temp_f = (temp_c * 9 / 5) + 32
     temp_raw = (temp_f / 0.1) + 900
     return hex(int(temp_raw))
+
 
 # postac heksadecymalna
 def generate_bin(temp_c, humidity, channel):
@@ -333,6 +333,7 @@ def create_signal(data_bin):
 
     with open("generated_signal.raw", "wb") as file_out:
         file_out.write(signal_out)
+
 
 if __name__ == '__main__':
     try:
