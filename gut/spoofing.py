@@ -16,17 +16,23 @@ class MainWindow(QWidget):
         self.welcome()
         mainLayout = QVBoxLayout()
 
-        self.smallerWindow = QDialog()
-        self.enterWindow = QDialog()
-        self.smallerWindow.setWindowTitle(' ')
-        self.enterWindow.setWindowTitle(' ')
-        self.smallerWindow.setWindowFlags(self.smallerWindow.windowFlags() | Qt.Popup)
+        self.smallerWindow = QDialog(self)
+        self.enterWindow = QDialog(self)
+        self.smallerWindow.setWindowTitle('Wybór kanału')
+        self.enterWindow.setWindowTitle('Wybór wartości')
+
         self.smallerWindowLayout = QVBoxLayout(self.smallerWindow)
         self.smallerWindowLayout.addWidget(self.welcomeBox)
 
         mainLayout.addWidget(self.smallerWindow)
         sleep(0.05)
         self.smallerWindow.show()
+        self.enterWindow.finished.connect(self.openSmallerWindow)  # Connect accepted signal to openSmallerWindow
+
+    def openSmallerWindow(self):
+        if self.smallerWindow is not None:
+            sleep(0.15)
+            self.smallerWindow.show()
 
     def init_ui(self):
         self.setMinimumSize(953, 643)
@@ -42,7 +48,6 @@ class MainWindow(QWidget):
     def handleButtonClick(self):
 
         clickedButton = app.sender()
-        self.enterWindow.setWindowFlags(self.enterWindow.windowFlags() | Qt.Popup)
         self.enterValues()
 
         self.enterWindowLayout = QVBoxLayout(self.enterWindow)
@@ -72,6 +77,7 @@ class MainWindow(QWidget):
         close = 1
 
         self.welcomeBox = QGroupBox()
+        self.welcomeBox.setStyleSheet("QGroupBox { border: none; }")
         info = QLabel("Wybierz kanał, na który chcesz wykonać atak Spoofing.")
         info.setStyleSheet("height: 70px; width: 500px; font-weight: bold")
         info.setFont(QFont("Didot", 25))
@@ -115,7 +121,7 @@ class MainWindow(QWidget):
 
     def enterValues(self):
         self.enterV = QGroupBox()
-        self.enterV.setTitle("Wybór wartości")
+        self.enterV.setStyleSheet("QGroupBox { border: none; }")
         valuesLayout = QGridLayout()
 
         temperatureLabel = QLabel("Temperatura")
@@ -222,13 +228,6 @@ class MainWindow(QWidget):
                 error_message.setIcon(QMessageBox.Warning)
                 error_message.setWindowTitle("Błąd")
                 error_message.setText("Wprowadzona wilgotności jest nieprawidłowa!")
-                error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
-                error_message.exec_()
-            elif humidity is None or temperature is None:
-                error_message = QMessageBox()
-                error_message.setIcon(QMessageBox.Warning)
-                error_message.setWindowTitle("Błąd")
-                error_message.setText("Nie wprowadzono wszystkich wartości!")
                 error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
                 error_message.exec_()
             else:
