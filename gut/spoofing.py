@@ -340,4 +340,4 @@ if __name__ == '__main__':
         mainWindow = MainWindow()
         sys.exit(app.exec_())
     except Exception as e:
-        print("Wystąpił błąd:", str(e))
+        print("Wystąpił błąd: ", str(e))
