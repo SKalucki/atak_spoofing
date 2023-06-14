@@ -207,8 +207,17 @@ class MainWindow(QWidget):
             error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
             error_message.exec_()
         else:
-            temperature = float(self.temperature.text())
+            temperature = self.temperature.text()
+            if (temperature[2:] != ",5" or temperature[2:] != ",0"):
+                temperature = temperature.replace(",", ".")
+                temperature = float(temperature)
+                temperature = temperature + 0.05
+            else:
+                pass
             humidity = int(self.humidity.text())
+
+            if(humidity == 95):
+                humidity = humidity - 0.001
             if ((temperature < -40 or temperature > 70) and (humidity > 95 or humidity < 20)):
                 error_message = QMessageBox()
                 error_message.setIcon(QMessageBox.Warning)
@@ -231,7 +240,7 @@ class MainWindow(QWidget):
                 error_message.setStyleSheet("QLabel {font-family: 'GFS Didot'; font-size: 20px} QMessageBox {}")
                 error_message.exec_()
             else:
-                create_signal(generate_bin(int(temperature), int(humidity), int(self.channel_value)))
+                create_signal(generate_bin(float(temperature), float(humidity), int(self.channel_value)))
                 message = QMessageBox()
                 message.setIcon(QMessageBox.Information)
                 message.setWindowTitle("Generowanie sygnału.")
